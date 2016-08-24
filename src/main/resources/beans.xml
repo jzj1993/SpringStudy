@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+        "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <bean id="serviceTarget" class="com.jzj.example.spring.MyServiceBean"/>
+
+    <bean id="logAdvisor" class="com.jzj.example.spring.LogAdvisor"/>
+
+    <bean id="passwordAdvisorTarget" class="com.jzj.example.spring.PasswordAdvisor"/>
+
+    <bean id="passwordAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <property name="advice">
+            <ref local="passwordAdvisorTarget"/>
+        </property>
+        <property name="patterns">
+            <list>
+                <value>.*getPassword</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="exceptionAdvisor" class="com.jzj.example.spring.ExceptionAdvisor"/>
+
+    <bean id="service" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyInterfaces" value="com.jzj.example.spring.ServiceBean"/>
+        <property name="target">
+            <ref local="serviceTarget"/>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>logAdvisor</value>
+                <value>passwordAdvisor</value>
+                <value>exceptionAdvisor</value>
+            </list>
+        </property>
+    </bean>
+</beans>
